@@ -755,19 +755,39 @@ export default function KlarisApp() {
                     <textarea
                       value={uploadedText}
                       onChange={(e) => setUploadedText(e.target.value)}
-                      placeholder="Paste your study notes, assignment details, or project requirements here..."
-                      rows={8}
+                      placeholder="Example: I need to prepare for my Data Structures exam covering trees, graphs, and dynamic programming...&#10;&#10;Or: I'm building an e-commerce platform with React and Node.js...&#10;&#10;Or: I have a research project on climate change..."
+                      rows={10}
                       className={`w-full px-4 py-3 ${cardBg} border ${borderColor} rounded-lg resize-none transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-${accent}-500`}
                     />
+                    <p className={`text-xs ${textSecondary} mt-2`}>
+                      Tip: Include keywords like "exam", "project", "assignment", or "research" for better results
+                    </p>
                   </div>
+
+                  {(!uploadedText && uploadedFiles.length === 0) && (
+                    <div className={`p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-center`}>
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        Please upload a file or paste your notes to continue
+                      </p>
+                    </div>
+                  )}
 
                   <button
                     onClick={generateSummary}
                     disabled={!uploadedText && uploadedFiles.length === 0}
-                    className={`w-full py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
+                    className={`w-full py-4 px-6 bg-${accent}-600 text-white rounded-lg font-semibold text-lg transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl`}
                   >
-                    {isLoading ? 'Generating...' : 'Generate Plan'}
-                    <FiChevronRight />
+                    {isLoading ? (
+                      <>
+                        <FiRefreshCw className="animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        Generate AI Plan
+                        <FiChevronRight />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
