@@ -62,7 +62,7 @@ export default function KlarisApp() {
     }
   }, [projects])
 
-  const accent = theme === 'forest' ? 'emerald' : theme === 'paper' ? 'amber' : theme === 'neo' ? 'blue' : 'indigo'
+  const accent = theme === 'forest' ? 'emerald' : theme === 'paper' ? 'amber' : theme === 'neo' ? 'blue' : 'emerald'
 
   const generateSummary = async () => {
     setIsLoading(true)
@@ -629,25 +629,27 @@ export default function KlarisApp() {
 
   const bgClass = isDark
     ? 'bg-gray-900 text-white'
-    : theme === 'light' ? 'bg-slate-50 text-gray-900'
+    : theme === 'light' ? 'bg-gray-50 text-gray-900'
     : theme === 'dark' ? 'bg-gray-900 text-white'
-    : theme === 'forest' ? 'bg-emerald-50 text-gray-900'
+    : theme === 'forest' ? 'bg-gray-50 text-gray-900'
     : theme === 'paper' ? 'bg-amber-50 text-gray-900'
     : 'bg-blue-50 text-gray-900'
 
+  const sidebarBg = isDark ? 'bg-gray-800' : theme === 'forest' ? 'bg-gray-800' : 'bg-gray-800'
+  const sidebarText = 'text-white'
   const cardBg = isDark ? 'bg-gray-800' : 'bg-white'
   const borderColor = isDark ? 'border-gray-700' : 'border-gray-200'
   const textSecondary = isDark ? 'text-gray-400' : 'text-gray-600'
-  const accentColor = `${accent}-600`
+  const accentColor = `${accent}-500`
 
   return (
     <div className={`min-h-screen ${bgClass} transition-colors duration-200`}>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`w-64 ${cardBg} border-r ${borderColor} flex flex-col`}>
-          <div className="p-6 border-b ${borderColor}">
+        <div className={`w-64 ${sidebarBg} ${sidebarText} flex flex-col border-r border-gray-700`}>
+          <div className="p-6 border-b border-gray-700">
             <h1 className="text-2xl font-bold">KLARIS</h1>
-            <p className={`text-sm ${textSecondary} mt-1`}>AI Study & Planning</p>
+            <p className="text-sm text-gray-400 mt-1">AI Study & Planning</p>
           </div>
 
           <nav className="flex-1 p-4 space-y-2">
@@ -663,8 +665,8 @@ export default function KlarisApp() {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-150 ${
                 currentStage === 'upload'
-                  ? `bg-${accent}-100 dark:bg-${accent}-900/30 text-${accent}-700 dark:text-${accent}-300`
-                  : `hover:bg-gray-100 dark:hover:bg-gray-700`
+                  ? `bg-${accent}-500 text-white shadow-lg`
+                  : `text-gray-300 hover:bg-gray-700`
               }`}
             >
               <FiPlus className="text-lg" />
@@ -675,8 +677,8 @@ export default function KlarisApp() {
               onClick={() => setCurrentStage('dashboard')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-150 ${
                 currentStage === 'dashboard'
-                  ? `bg-${accent}-100 dark:bg-${accent}-900/30 text-${accent}-700 dark:text-${accent}-300`
-                  : `hover:bg-gray-100 dark:hover:bg-gray-700`
+                  ? `bg-${accent}-500 text-white shadow-lg`
+                  : `text-gray-300 hover:bg-gray-700`
               }`}
             >
               <FiFileText className="text-lg" />
@@ -684,13 +686,13 @@ export default function KlarisApp() {
             </button>
           </nav>
 
-          <div className={`p-4 border-t ${borderColor} space-y-3`}>
+          <div className="p-4 border-t border-gray-700 space-y-3">
             <div>
-              <label className={`text-xs font-medium ${textSecondary} mb-2 block`}>Theme</label>
+              <label className="text-xs font-medium text-gray-400 mb-2 block">Theme</label>
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value as Theme)}
-                className={`w-full px-3 py-2 ${cardBg} border ${borderColor} rounded-lg text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-${accent}-500`}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
@@ -701,11 +703,11 @@ export default function KlarisApp() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm">Dark Mode</span>
+              <span className="text-sm text-gray-300">Dark Mode</span>
               <button
                 onClick={() => setIsDark(!isDark)}
                 className={`relative w-12 h-6 rounded-full transition-all duration-200 ${
-                  isDark ? `bg-${accent}-600` : 'bg-gray-300'
+                  isDark ? 'bg-emerald-500' : 'bg-gray-600'
                 }`}
               >
                 <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ${
