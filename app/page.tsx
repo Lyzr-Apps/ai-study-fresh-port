@@ -36,6 +36,8 @@ export default function KlarisApp() {
   const [copilotOpen, setCopilotOpen] = useState(false)
   const [copilotMessages, setCopilotMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([])
   const [copilotInput, setCopilotInput] = useState('')
+  const [summaryApproved, setSummaryApproved] = useState(false)
+  const [tasksApproved, setTasksApproved] = useState(false)
 
   // Load from localStorage
   useEffect(() => {
@@ -191,6 +193,7 @@ export default function KlarisApp() {
   const generateTasks = async () => {
     if (!currentProject) return
     setIsLoading(true)
+    setSummaryApproved(false)
 
     await new Promise(resolve => setTimeout(resolve, 1500))
 
@@ -494,6 +497,7 @@ export default function KlarisApp() {
   const generateTimeline = async () => {
     if (!currentProject) return
     setIsLoading(true)
+    setTasksApproved(false)
 
     await new Promise(resolve => setTimeout(resolve, 1500))
 
@@ -551,9 +555,9 @@ export default function KlarisApp() {
 
   const approveStage = () => {
     if (currentStage === 'summary') {
-      generateTasks()
+      setSummaryApproved(true)
     } else if (currentStage === 'tasks') {
-      generateTimeline()
+      setTasksApproved(true)
     } else if (currentStage === 'timeline') {
       if (currentProject) {
         setProjects(prev => [...prev.filter(p => p.id !== currentProject.id), currentProject])
@@ -564,8 +568,10 @@ export default function KlarisApp() {
 
   const regenerateStage = () => {
     if (currentStage === 'summary') {
+      setSummaryApproved(false)
       generateSummary()
     } else if (currentStage === 'tasks') {
+      setTasksApproved(false)
       generateTasks()
     } else if (currentStage === 'timeline') {
       generateTimeline()
@@ -652,6 +658,8 @@ export default function KlarisApp() {
                 setUploadedText('')
                 setUploadedFiles([])
                 setUploadedAssets([])
+                setSummaryApproved(false)
+                setTasksApproved(false)
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-150 ${
                 currentStage === 'upload'
@@ -835,23 +843,51 @@ export default function KlarisApp() {
                     )}
                   </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={approveStage}
-                      className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
-                    >
-                      <FiCheck />
-                      Approve & Continue
-                    </button>
-                    <button
-                      onClick={regenerateStage}
-                      disabled={isLoading}
-                      className={`px-6 py-3 border ${borderColor} rounded-lg font-medium transition-all duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2`}
-                    >
-                      <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
-                      Regenerate
-                    </button>
-                  </div>
+                  {!summaryApproved ? (
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={approveStage}
+                        className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
+                      >
+                        <FiCheck />
+                        Approve Summary
+                      </button>
+                      <button
+                        onClick={regenerateStage}
+                        disabled={isLoading}
+                        className={`px-6 py-3 border ${borderColor} rounded-lg font-medium transition-all duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2`}
+                      >
+                        <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
+                        Regenerate
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="pt-4">
+                      <div className={`p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center`}>
+                        <p className="text-sm text-green-800 dark:text-green-200 flex items-center justify-center gap-2">
+                          <FiCheck className="text-lg" />
+                          Summary approved! Ready to generate tasks and to-dos.
+                        </p>
+                      </div>
+                      <button
+                        onClick={generateTasks}
+                        disabled={isLoading}
+                        className={`w-full py-4 px-6 bg-${accent}-600 text-white rounded-lg font-semibold text-lg transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl`}
+                      >
+                        {isLoading ? (
+                          <>
+                            <FiRefreshCw className="animate-spin" />
+                            Generating Tasks...
+                          </>
+                        ) : (
+                          <>
+                            <FiCheckSquare />
+                            Generate Tasks & To-Dos
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -860,7 +896,7 @@ export default function KlarisApp() {
             {currentStage === 'tasks' && currentProject && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-3xl font-bold mb-2">Tasks</h2>
+                  <h2 className="text-3xl font-bold mb-2">Tasks & To-Dos</h2>
                   <p className={textSecondary}>Review and approve the task list</p>
                 </div>
 
@@ -893,23 +929,51 @@ export default function KlarisApp() {
                     </div>
                   ))}
 
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={approveStage}
-                      className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
-                    >
-                      <FiCheck />
-                      Approve & Continue
-                    </button>
-                    <button
-                      onClick={regenerateStage}
-                      disabled={isLoading}
-                      className={`px-6 py-3 border ${borderColor} rounded-lg font-medium transition-all duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2`}
-                    >
-                      <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
-                      Regenerate
-                    </button>
-                  </div>
+                  {!tasksApproved ? (
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={approveStage}
+                        className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
+                      >
+                        <FiCheck />
+                        Approve Tasks
+                      </button>
+                      <button
+                        onClick={regenerateStage}
+                        disabled={isLoading}
+                        className={`px-6 py-3 border ${borderColor} rounded-lg font-medium transition-all duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2`}
+                      >
+                        <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
+                        Regenerate
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="pt-4">
+                      <div className={`p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center`}>
+                        <p className="text-sm text-green-800 dark:text-green-200 flex items-center justify-center gap-2">
+                          <FiCheck className="text-lg" />
+                          Tasks approved! Ready to generate schedule.
+                        </p>
+                      </div>
+                      <button
+                        onClick={generateTimeline}
+                        disabled={isLoading}
+                        className={`w-full py-4 px-6 bg-${accent}-600 text-white rounded-lg font-semibold text-lg transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl`}
+                      >
+                        {isLoading ? (
+                          <>
+                            <FiRefreshCw className="animate-spin" />
+                            Generating Schedule...
+                          </>
+                        ) : (
+                          <>
+                            <FiCalendar />
+                            Generate Schedule & Timeline
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
