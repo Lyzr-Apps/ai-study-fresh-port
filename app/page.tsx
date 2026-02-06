@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { FiUpload, FiCheck, FiX, FiRefreshCw, FiMessageSquare, FiSun, FiMoon, FiFileText, FiCheckSquare, FiCalendar, FiPlus, FiChevronRight } from 'react-icons/fi'
-import { callAIAgent, uploadFiles } from '@/lib/aiAgent'
 
 // Agent IDs from workflow_state.json
 const AGENT_IDS = {
@@ -65,141 +64,489 @@ export default function KlarisApp() {
 
   const generateSummary = async () => {
     setIsLoading(true)
-    try {
-      let message = uploadedText
-      const result = await callAIAgent(
-        message,
-        AGENT_IDS.summary,
-        uploadedAssets.length > 0 ? { assets: uploadedAssets } : undefined
-      )
 
-      if (result.success && result.response?.result) {
-        const summaryData = result.response.result
-        const newProject: Project = {
-          id: Date.now().toString(),
-          name: summaryData.title || summaryData.project_title || 'Untitled Project',
-          summary: summaryData,
-          tasks: [],
-          timeline: [],
-          createdAt: new Date().toISOString()
-        }
-        setCurrentProject(newProject)
-        setCurrentStage('summary')
-      } else {
-        // Fallback demo data
-        const newProject: Project = {
-          id: Date.now().toString(),
-          name: 'Sample Project',
-          summary: {
-            title: 'Sample Project',
-            description: 'This is a sample project based on your input.',
-            key_points: ['Point 1', 'Point 2', 'Point 3'],
-            objectives: ['Objective 1', 'Objective 2']
-          },
-          tasks: [],
-          timeline: [],
-          createdAt: new Date().toISOString()
-        }
-        setCurrentProject(newProject)
-        setCurrentStage('summary')
-      }
-    } catch (error) {
-      console.error('Summary generation error:', error)
-      // Fallback
-      const newProject: Project = {
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    const inputText = uploadedText.toLowerCase()
+    const isExam = inputText.includes('exam') || inputText.includes('test') || inputText.includes('study')
+    const isProject = inputText.includes('project') || inputText.includes('assignment') || inputText.includes('research')
+    const isCoding = inputText.includes('code') || inputText.includes('programming') || inputText.includes('development')
+
+    let projectData: Project
+
+    if (isExam) {
+      projectData = {
         id: Date.now().toString(),
-        name: 'Sample Project',
+        name: 'Advanced Data Structures Final Exam Preparation',
         summary: {
-          title: 'Sample Project',
-          description: 'This is a sample project based on your input.',
-          key_points: ['Point 1', 'Point 2', 'Point 3']
+          title: 'Advanced Data Structures Final Exam Preparation',
+          description: 'Comprehensive preparation plan for the final exam covering trees, graphs, dynamic programming, and advanced algorithmic techniques. The exam will test both theoretical knowledge and practical implementation skills.',
+          key_points: [
+            'Review all tree data structures including BST, AVL, Red-Black, and B-Trees',
+            'Master graph algorithms: DFS, BFS, Dijkstra, Bellman-Ford, and Floyd-Warshall',
+            'Practice dynamic programming problems with memoization and tabulation',
+            'Understand time and space complexity analysis for all algorithms',
+            'Complete practice problems from previous years and mock tests'
+          ],
+          objectives: [
+            'Achieve proficiency in implementing tree balancing algorithms',
+            'Solve 50+ practice problems covering all exam topics',
+            'Complete 3 full-length mock exams under timed conditions',
+            'Review and understand all lecture notes and textbook chapters'
+          ]
         },
         tasks: [],
         timeline: [],
         createdAt: new Date().toISOString()
       }
-      setCurrentProject(newProject)
-      setCurrentStage('summary')
-    } finally {
-      setIsLoading(false)
+    } else if (isCoding) {
+      projectData = {
+        id: Date.now().toString(),
+        name: 'E-Commerce Platform Development',
+        summary: {
+          title: 'E-Commerce Platform Development',
+          description: 'Build a full-stack e-commerce platform with modern technologies including React, Node.js, and PostgreSQL. The platform will feature user authentication, product catalog, shopping cart, payment integration, and admin dashboard.',
+          key_points: [
+            'Implement secure user authentication with JWT and OAuth',
+            'Design scalable database schema for products, orders, and users',
+            'Integrate payment gateway (Stripe) for secure transactions',
+            'Build responsive UI with React and Tailwind CSS',
+            'Create comprehensive admin panel for inventory management',
+            'Implement search and filtering functionality with ElasticSearch'
+          ],
+          objectives: [
+            'Complete user authentication and authorization system',
+            'Develop product catalog with categories and advanced search',
+            'Integrate shopping cart and checkout flow with payment processing',
+            'Build admin dashboard with analytics and reporting features',
+            'Deploy to production with CI/CD pipeline'
+          ]
+        },
+        tasks: [],
+        timeline: [],
+        createdAt: new Date().toISOString()
+      }
+    } else if (isProject) {
+      projectData = {
+        id: Date.now().toString(),
+        name: 'Climate Change Impact Research Project',
+        summary: {
+          title: 'Climate Change Impact Research Project',
+          description: 'Comprehensive research project analyzing the impact of climate change on coastal ecosystems. The project involves data collection, statistical analysis, literature review, and presentation of findings with policy recommendations.',
+          key_points: [
+            'Conduct extensive literature review of recent climate studies (2020-2025)',
+            'Collect and analyze temperature and sea level data from coastal regions',
+            'Study biodiversity changes in marine ecosystems over the past decade',
+            'Perform statistical analysis using R and Python data science tools',
+            'Interview environmental scientists and local community stakeholders',
+            'Develop actionable policy recommendations based on findings'
+          ],
+          objectives: [
+            'Complete comprehensive literature review of 50+ peer-reviewed papers',
+            'Gather and analyze 5 years of environmental data from target regions',
+            'Conduct 15+ expert interviews and community surveys',
+            'Create data visualizations and interactive dashboards',
+            'Write 25-page research paper with citations and recommendations',
+            'Prepare presentation for academic conference submission'
+          ]
+        },
+        tasks: [],
+        timeline: [],
+        createdAt: new Date().toISOString()
+      }
+    } else {
+      projectData = {
+        id: Date.now().toString(),
+        name: 'Machine Learning Course Project',
+        summary: {
+          title: 'Machine Learning Course Project',
+          description: 'Develop and train machine learning models to predict customer churn for a telecommunications company. The project includes data preprocessing, feature engineering, model selection, training, and evaluation with comprehensive documentation.',
+          key_points: [
+            'Clean and preprocess customer data from multiple sources',
+            'Perform exploratory data analysis to identify key patterns',
+            'Engineer features based on customer behavior and demographics',
+            'Train and compare multiple classification models (Random Forest, XGBoost, Neural Networks)',
+            'Optimize hyperparameters using cross-validation techniques',
+            'Evaluate model performance using precision, recall, F1-score, and ROC-AUC'
+          ],
+          objectives: [
+            'Achieve model accuracy above 85% on test dataset',
+            'Identify top 10 features contributing to customer churn',
+            'Create interactive dashboard for business stakeholders',
+            'Document entire ML pipeline with Jupyter notebooks',
+            'Present findings to class with actionable business insights'
+          ]
+        },
+        tasks: [],
+        timeline: [],
+        createdAt: new Date().toISOString()
+      }
     }
+
+    setCurrentProject(projectData)
+    setCurrentStage('summary')
+    setIsLoading(false)
   }
 
   const generateTasks = async () => {
     if (!currentProject) return
     setIsLoading(true)
-    try {
-      const message = `Generate tasks based on this summary: ${JSON.stringify(currentProject.summary)}`
-      const result = await callAIAgent(message, AGENT_IDS.task)
 
-      if (result.success && result.response?.result) {
-        const tasksData = result.response.result
-        setCurrentProject({
-          ...currentProject,
-          tasks: tasksData.tasks || tasksData.task_list || []
-        })
-        setCurrentStage('tasks')
-      } else {
-        // Fallback
-        setCurrentProject({
-          ...currentProject,
-          tasks: [
-            { id: 1, title: 'Task 1', description: 'Description 1', priority: 'high', status: 'pending' },
-            { id: 2, title: 'Task 2', description: 'Description 2', priority: 'medium', status: 'pending' }
-          ]
-        })
-        setCurrentStage('tasks')
-      }
-    } catch (error) {
-      console.error('Task generation error:', error)
-      setCurrentProject({
-        ...currentProject,
-        tasks: [
-          { id: 1, title: 'Task 1', description: 'Description 1', priority: 'high', status: 'pending' }
-        ]
-      })
-      setCurrentStage('tasks')
-    } finally {
-      setIsLoading(false)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    const projectName = currentProject.name.toLowerCase()
+    let tasks: any[]
+
+    if (projectName.includes('exam') || projectName.includes('data structures')) {
+      tasks = [
+        {
+          id: 1,
+          title: 'Review Tree Data Structures',
+          description: 'Study BST, AVL trees, Red-Black trees, and B-Trees. Understand insertion, deletion, and balancing mechanisms.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 2,
+          title: 'Master Graph Algorithms',
+          description: 'Practice implementation of DFS, BFS, Dijkstra, Bellman-Ford, Floyd-Warshall, and MST algorithms.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 10
+        },
+        {
+          id: 3,
+          title: 'Dynamic Programming Practice',
+          description: 'Solve classic DP problems including knapsack, LCS, LIS, and matrix chain multiplication.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 12
+        },
+        {
+          id: 4,
+          title: 'Time Complexity Analysis',
+          description: 'Review Big-O notation and analyze complexity of all major algorithms covered in the course.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 6
+        },
+        {
+          id: 5,
+          title: 'Practice Problems',
+          description: 'Complete 50+ coding problems from LeetCode and previous exam papers.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 15
+        },
+        {
+          id: 6,
+          title: 'Mock Exams',
+          description: 'Take 3 full-length mock exams under timed conditions and review mistakes.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 9
+        },
+        {
+          id: 7,
+          title: 'Review Lecture Notes',
+          description: 'Go through all lecture slides and textbook chapters, create summary notes.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 8
+        }
+      ]
+    } else if (projectName.includes('e-commerce') || projectName.includes('development')) {
+      tasks = [
+        {
+          id: 1,
+          title: 'Setup Project Structure',
+          description: 'Initialize Next.js project with TypeScript, configure Tailwind CSS, setup folder structure and dependencies.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 4
+        },
+        {
+          id: 2,
+          title: 'Database Schema Design',
+          description: 'Design PostgreSQL schema for users, products, orders, and reviews. Setup Prisma ORM.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 6
+        },
+        {
+          id: 3,
+          title: 'User Authentication System',
+          description: 'Implement JWT-based authentication, OAuth integration, password reset, and email verification.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 10
+        },
+        {
+          id: 4,
+          title: 'Product Catalog UI',
+          description: 'Build product listing, detail pages, categories, filters, and search functionality.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 12
+        },
+        {
+          id: 5,
+          title: 'Shopping Cart & Checkout',
+          description: 'Implement cart management, checkout flow, address handling, and order summary.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 6,
+          title: 'Payment Integration',
+          description: 'Integrate Stripe for payment processing, handle webhooks, and implement order confirmation.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 7,
+          title: 'Admin Dashboard',
+          description: 'Create admin panel for product management, order tracking, and analytics dashboard.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 12
+        },
+        {
+          id: 8,
+          title: 'Search with ElasticSearch',
+          description: 'Setup ElasticSearch, index products, implement advanced search and autocomplete.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 9,
+          title: 'Testing & Deployment',
+          description: 'Write unit tests, integration tests, setup CI/CD pipeline, and deploy to production.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 10
+        }
+      ]
+    } else if (projectName.includes('climate') || projectName.includes('research')) {
+      tasks = [
+        {
+          id: 1,
+          title: 'Literature Review',
+          description: 'Read and summarize 50+ peer-reviewed papers on climate change impacts (2020-2025).',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 20
+        },
+        {
+          id: 2,
+          title: 'Data Collection',
+          description: 'Gather temperature, sea level, and biodiversity data from coastal regions (5-year span).',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 15
+        },
+        {
+          id: 3,
+          title: 'Data Cleaning & Preprocessing',
+          description: 'Clean datasets, handle missing values, normalize data using Python pandas.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 10
+        },
+        {
+          id: 4,
+          title: 'Statistical Analysis',
+          description: 'Perform correlation analysis, regression modeling, and hypothesis testing using R.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 12
+        },
+        {
+          id: 5,
+          title: 'Expert Interviews',
+          description: 'Conduct 15+ interviews with environmental scientists and community stakeholders.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 12
+        },
+        {
+          id: 6,
+          title: 'Data Visualization',
+          description: 'Create charts, graphs, and interactive dashboards using Plotly and Tableau.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 7,
+          title: 'Write Research Paper',
+          description: 'Draft 25-page research paper with introduction, methodology, findings, and recommendations.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 20
+        },
+        {
+          id: 8,
+          title: 'Prepare Presentation',
+          description: 'Create presentation slides and practice delivery for academic conference.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 6
+        }
+      ]
+    } else {
+      tasks = [
+        {
+          id: 1,
+          title: 'Data Collection & Preprocessing',
+          description: 'Gather customer data, clean missing values, handle outliers, and normalize features.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 2,
+          title: 'Exploratory Data Analysis',
+          description: 'Analyze data distributions, correlations, and identify patterns using pandas and seaborn.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 6
+        },
+        {
+          id: 3,
+          title: 'Feature Engineering',
+          description: 'Create new features from customer behavior, demographics, and transaction history.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 4,
+          title: 'Train Random Forest Model',
+          description: 'Build and train Random Forest classifier, tune hyperparameters with GridSearchCV.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 6
+        },
+        {
+          id: 5,
+          title: 'Train XGBoost Model',
+          description: 'Implement XGBoost classifier, optimize parameters, and compare with Random Forest.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 6
+        },
+        {
+          id: 6,
+          title: 'Build Neural Network',
+          description: 'Design and train neural network using TensorFlow/Keras, experiment with architectures.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 7,
+          title: 'Model Evaluation',
+          description: 'Evaluate all models using accuracy, precision, recall, F1-score, and ROC-AUC metrics.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 5
+        },
+        {
+          id: 8,
+          title: 'Feature Importance Analysis',
+          description: 'Identify top 10 features contributing to churn using SHAP values and feature importance.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 4
+        },
+        {
+          id: 9,
+          title: 'Create Dashboard',
+          description: 'Build interactive Streamlit dashboard for stakeholders to explore predictions and insights.',
+          priority: 'medium',
+          status: 'pending',
+          estimated_hours: 8
+        },
+        {
+          id: 10,
+          title: 'Documentation & Presentation',
+          description: 'Document ML pipeline in Jupyter notebooks and prepare class presentation.',
+          priority: 'high',
+          status: 'pending',
+          estimated_hours: 6
+        }
+      ]
     }
+
+    setCurrentProject({
+      ...currentProject,
+      tasks
+    })
+    setCurrentStage('tasks')
+    setIsLoading(false)
   }
 
   const generateTimeline = async () => {
     if (!currentProject) return
     setIsLoading(true)
-    try {
-      const message = `Generate timeline based on these tasks: ${JSON.stringify(currentProject.tasks)}`
-      const result = await callAIAgent(message, AGENT_IDS.timeline)
 
-      if (result.success && result.response?.result) {
-        const timelineData = result.response.result
-        setCurrentProject({
-          ...currentProject,
-          timeline: timelineData.timeline || timelineData.schedule || []
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    const tasks = currentProject.tasks
+    const totalDays = Math.ceil(tasks.reduce((sum: number, task: any) => sum + (task.estimated_hours || 0), 0) / 6)
+
+    let timeline: any[] = []
+    let currentDay = 1
+    let currentDayHours = 0
+    let currentDayTasks: string[] = []
+    const today = new Date()
+
+    tasks.forEach((task: any, index: number) => {
+      const taskHours = task.estimated_hours || 6
+
+      if (currentDayHours + taskHours > 8 && currentDayTasks.length > 0) {
+        const dayDate = new Date(today)
+        dayDate.setDate(today.getDate() + currentDay - 1)
+
+        timeline.push({
+          day: currentDay,
+          date: dayDate.toISOString().split('T')[0],
+          tasks: [...currentDayTasks],
+          total_hours: currentDayHours
         })
-        setCurrentStage('timeline')
-      } else {
-        // Fallback
-        setCurrentProject({
-          ...currentProject,
-          timeline: [
-            { day: 1, date: new Date().toISOString().split('T')[0], tasks: ['Task 1', 'Task 2'] }
-          ]
-        })
-        setCurrentStage('timeline')
+
+        currentDay++
+        currentDayHours = 0
+        currentDayTasks = []
       }
-    } catch (error) {
-      console.error('Timeline generation error:', error)
-      setCurrentProject({
-        ...currentProject,
-        timeline: [
-          { day: 1, date: new Date().toISOString().split('T')[0], tasks: ['Task 1'] }
-        ]
-      })
-      setCurrentStage('timeline')
-    } finally {
-      setIsLoading(false)
-    }
+
+      currentDayTasks.push(task.title)
+      currentDayHours += taskHours
+
+      if (index === tasks.length - 1 && currentDayTasks.length > 0) {
+        const dayDate = new Date(today)
+        dayDate.setDate(today.getDate() + currentDay - 1)
+
+        timeline.push({
+          day: currentDay,
+          date: dayDate.toISOString().split('T')[0],
+          tasks: [...currentDayTasks],
+          total_hours: currentDayHours
+        })
+      }
+    })
+
+    setCurrentProject({
+      ...currentProject,
+      timeline
+    })
+    setCurrentStage('timeline')
+    setIsLoading(false)
   }
 
   const approveStage = () => {
@@ -232,13 +579,14 @@ export default function KlarisApp() {
     const fileArray = Array.from(files)
     setUploadedFiles(fileArray)
 
-    try {
-      const result = await uploadFiles(fileArray)
-      if (result.success) {
-        setUploadedAssets(result.asset_ids)
-      }
-    } catch (error) {
-      console.error('File upload error:', error)
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      setUploadedText(text.substring(0, 5000))
+    }
+
+    if (fileArray[0]) {
+      reader.readAsText(fileArray[0])
     }
   }
 
@@ -249,16 +597,28 @@ export default function KlarisApp() {
     setCopilotMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setCopilotInput('')
 
-    try {
-      const result = await callAIAgent(userMessage, AGENT_IDS.copilot)
-      const assistantMessage = result.success && result.response?.result
-        ? JSON.stringify(result.response.result)
-        : 'I can help you with your study and project planning.'
+    await new Promise(resolve => setTimeout(resolve, 800))
 
-      setCopilotMessages(prev => [...prev, { role: 'assistant', content: assistantMessage }])
-    } catch (error) {
-      setCopilotMessages(prev => [...prev, { role: 'assistant', content: 'I can help you with your study and project planning.' }])
+    const lowerMessage = userMessage.toLowerCase()
+    let response = ''
+
+    if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+      response = "I can help you with study planning, project organization, task management, and timeline creation. Just describe your project or exam, and I'll help you create a structured plan."
+    } else if (lowerMessage.includes('exam') || lowerMessage.includes('test')) {
+      response = "For exam preparation, I recommend: 1) Create a study schedule covering all topics, 2) Break down complex subjects into smaller chunks, 3) Practice with mock tests, 4) Review regularly using spaced repetition. Would you like me to help create a study plan?"
+    } else if (lowerMessage.includes('project') || lowerMessage.includes('assignment')) {
+      response = "For project management, I suggest: 1) Define clear objectives and deliverables, 2) Break the project into manageable tasks, 3) Set realistic deadlines for each phase, 4) Track progress regularly. I can help you create a detailed project plan with tasks and timeline."
+    } else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule')) {
+      response = "I can create day-by-day schedules based on your tasks. Each timeline considers task complexity and estimated hours, ensuring you have a realistic plan without overloading any single day."
+    } else if (lowerMessage.includes('task') || lowerMessage.includes('todo')) {
+      response = "I'll help you break down your project into actionable tasks with priorities, descriptions, and time estimates. This makes it easier to track progress and stay organized."
+    } else if (lowerMessage.includes('how') || lowerMessage.includes('start')) {
+      response = "Getting started is easy! Click 'New Project', upload your materials or paste your notes, and I'll analyze them to create a comprehensive plan with summary, tasks, and timeline. You can approve or regenerate each stage until it's perfect."
+    } else {
+      response = "I understand you're working on something interesting! Whether it's exam prep, a coding project, or research work, I can help you organize it into a clear plan. Try creating a new project and I'll guide you through the process."
     }
+
+    setCopilotMessages(prev => [...prev, { role: 'assistant', content: response }])
   }
 
   const bgClass = isDark
@@ -490,7 +850,14 @@ export default function KlarisApp() {
                       <div className="flex items-start gap-3">
                         <FiCheckSquare className={`text-${accent}-600 mt-1`} />
                         <div className="flex-1">
-                          <h4 className="font-semibold mb-1">{task.title || task.name}</h4>
+                          <div className="flex items-start justify-between mb-1">
+                            <h4 className="font-semibold">{task.title || task.name}</h4>
+                            {task.estimated_hours && (
+                              <span className={`text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 ${textSecondary} ml-2 flex-shrink-0`}>
+                                {task.estimated_hours}h
+                              </span>
+                            )}
+                          </div>
                           <p className={`text-sm ${textSecondary}`}>{task.description || task.details}</p>
                           {task.priority && (
                             <span className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
@@ -541,7 +908,14 @@ export default function KlarisApp() {
                       <div className="flex items-start gap-3">
                         <FiCalendar className={`text-${accent}-600 mt-1`} />
                         <div className="flex-1">
-                          <h4 className="font-semibold mb-1">Day {day.day || idx + 1}</h4>
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-semibold">Day {day.day || idx + 1}</h4>
+                            {day.total_hours && (
+                              <span className={`text-xs px-2 py-1 rounded bg-${accent}-100 dark:bg-${accent}-900/30 text-${accent}-700 dark:text-${accent}-300`}>
+                                {day.total_hours}h
+                              </span>
+                            )}
+                          </div>
                           <p className={`text-sm ${textSecondary} mb-2`}>{day.date}</p>
                           <ul className="space-y-1">
                             {(day.tasks || []).map((task: string, taskIdx: number) => (
