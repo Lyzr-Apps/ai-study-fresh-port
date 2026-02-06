@@ -1,0 +1,72 @@
+{
+  "workflow_name": "KLARIS - AI-Powered Study & Project Planning Assistant",
+  "pattern": "Manager-Subagent with Independent Chat Copilot",
+  "created_at": "2026-02-06T00:00:00Z",
+  "agents": {
+    "document_processing_manager": {
+      "agent_id": "6985a4748ce1fc653cfdee8d",
+      "name": "Document Processing Manager",
+      "type": "manager",
+      "trigger": "Generate Plan button after upload on New Project screen",
+      "managed_agents": [
+        "6985a43f301c62c7ca2c7dde",
+        "6985a44f5eb49186d63e5de8",
+        "6985a460b37fff3a03c07c78"
+      ]
+    },
+    "summary_agent": {
+      "agent_id": "6985a43f301c62c7ca2c7dde",
+      "name": "Summary Agent",
+      "type": "sub-agent",
+      "trigger": "Auto (via Manager)",
+      "parent_agent": "6985a4748ce1fc653cfdee8d"
+    },
+    "task_generator_agent": {
+      "agent_id": "6985a44f5eb49186d63e5de8",
+      "name": "Task Generator Agent",
+      "type": "sub-agent",
+      "trigger": "Auto (via Manager)",
+      "parent_agent": "6985a4748ce1fc653cfdee8d"
+    },
+    "timeline_agent": {
+      "agent_id": "6985a460b37fff3a03c07c78",
+      "name": "Timeline Agent",
+      "type": "sub-agent",
+      "trigger": "Auto (via Manager)",
+      "parent_agent": "6985a4748ce1fc653cfdee8d"
+    },
+    "chat_copilot_agent": {
+      "agent_id": "6985a4878ce1fc653cfdee8e",
+      "name": "Chat Copilot Agent",
+      "type": "independent",
+      "trigger": "Open Copilot floating button on Dashboard"
+    }
+  },
+  "workflow_sequence": [
+    {
+      "stage": 1,
+      "agent": "summary_agent",
+      "approval_required": true,
+      "description": "Analyze document and extract summary"
+    },
+    {
+      "stage": 2,
+      "agent": "task_generator_agent",
+      "approval_required": true,
+      "description": "Generate actionable tasks from approved summary"
+    },
+    {
+      "stage": 3,
+      "agent": "timeline_agent",
+      "approval_required": true,
+      "description": "Create day-wise timeline from approved tasks"
+    }
+  ],
+  "response_schemas": {
+    "summary_agent": "/app/nextjs-project/response_schemas/summary_agent_response.json",
+    "task_generator_agent": "/app/nextjs-project/response_schemas/task_generator_agent_response.json",
+    "timeline_agent": "/app/nextjs-project/response_schemas/timeline_agent_response.json",
+    "document_processing_manager": "/app/nextjs-project/response_schemas/document_processing_manager_response.json",
+    "chat_copilot_agent": "/app/nextjs-project/response_schemas/chat_copilot_agent_response.json"
+  }
+}

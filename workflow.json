@@ -1,0 +1,94 @@
+{
+  "workflow_name": "KLARIS - AI-Powered Study & Project Planning Assistant",
+  "version": "1.0.0",
+  "pattern": "Manager-Subagent with Independent Chat Copilot",
+  "nodes": [
+    {
+      "id": "input_node",
+      "type": "Input",
+      "label": "Document Upload",
+      "nodeCategory": "input"
+    },
+    {
+      "id": "document_processing_manager",
+      "type": "Agent",
+      "label": "Document Processing Manager",
+      "nodeCategory": "agent",
+      "agent_id": "6985a4748ce1fc653cfdee8d"
+    },
+    {
+      "id": "summary_agent",
+      "type": "Agent",
+      "label": "Summary Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a43f301c62c7ca2c7dde"
+    },
+    {
+      "id": "task_generator_agent",
+      "type": "Agent",
+      "label": "Task Generator Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a44f5eb49186d63e5de8"
+    },
+    {
+      "id": "timeline_agent",
+      "type": "Agent",
+      "label": "Timeline Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a460b37fff3a03c07c78"
+    },
+    {
+      "id": "chat_copilot_input",
+      "type": "Input",
+      "label": "Chat Copilot Trigger",
+      "nodeCategory": "input"
+    },
+    {
+      "id": "chat_copilot_agent",
+      "type": "Agent",
+      "label": "Chat Copilot Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a4878ce1fc653cfdee8e"
+    },
+    {
+      "id": "output_node",
+      "type": "Output",
+      "label": "Final Plan Output",
+      "nodeCategory": "end"
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "document_processing_manager"
+    },
+    {
+      "source": "document_processing_manager",
+      "target": "summary_agent"
+    },
+    {
+      "source": "document_processing_manager",
+      "target": "task_generator_agent"
+    },
+    {
+      "source": "document_processing_manager",
+      "target": "timeline_agent"
+    },
+    {
+      "source": "summary_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "task_generator_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "timeline_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "chat_copilot_input",
+      "target": "chat_copilot_agent"
+    }
+  ]
+}
