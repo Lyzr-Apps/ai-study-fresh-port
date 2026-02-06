@@ -819,11 +819,15 @@ export default function KlarisApp() {
                     {currentProject.summary.key_points && (
                       <div>
                         <h4 className="font-semibold mb-3">Key Points</h4>
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                           {currentProject.summary.key_points.map((point: string, idx: number) => (
-                            <li key={idx} className={`flex items-start gap-3 ${textSecondary}`}>
-                              <FiCheck className={`text-${accent}-600 mt-1 flex-shrink-0`} />
-                              <span>{point}</span>
+                            <li key={idx} className="flex items-start gap-3">
+                              <div className="mt-0.5">
+                                <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                  <FiCheck className="text-blue-600 dark:text-blue-400 text-xs" />
+                                </div>
+                              </div>
+                              <span className={textSecondary}>{point}</span>
                             </li>
                           ))}
                         </ul>
@@ -833,11 +837,15 @@ export default function KlarisApp() {
                     {currentProject.summary.objectives && (
                       <div className="mt-6">
                         <h4 className="font-semibold mb-3">Objectives</h4>
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                           {currentProject.summary.objectives.map((obj: string, idx: number) => (
-                            <li key={idx} className={`flex items-start gap-3 ${textSecondary}`}>
-                              <FiCheck className={`text-${accent}-600 mt-1 flex-shrink-0`} />
-                              <span>{obj}</span>
+                            <li key={idx} className="flex items-start gap-3">
+                              <div className="mt-0.5">
+                                <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                  <FiCheck className="text-blue-600 dark:text-blue-400 text-xs" />
+                                </div>
+                              </div>
+                              <span className={textSecondary}>{obj}</span>
                             </li>
                           ))}
                         </ul>
@@ -849,7 +857,7 @@ export default function KlarisApp() {
                     <div className="flex gap-3 pt-4">
                       <button
                         onClick={approveStage}
-                        className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
+                        className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-blue-700 flex items-center justify-center gap-2"
                       >
                         <FiCheck />
                         Approve Summary
@@ -865,7 +873,7 @@ export default function KlarisApp() {
                     </div>
                   ) : (
                     <div className="pt-4">
-                      <div className={`p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center`}>
+                      <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center">
                         <p className="text-sm text-green-800 dark:text-green-200 flex items-center justify-center gap-2">
                           <FiCheck className="text-lg" />
                           Summary approved! Ready to generate tasks and to-dos.
@@ -874,7 +882,7 @@ export default function KlarisApp() {
                       <button
                         onClick={generateTasks}
                         disabled={isLoading}
-                        className={`w-full py-4 px-6 bg-${accent}-600 text-white rounded-lg font-semibold text-lg transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl`}
+                        className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isLoading ? (
                           <>
@@ -883,8 +891,8 @@ export default function KlarisApp() {
                           </>
                         ) : (
                           <>
-                            <FiCheckSquare />
                             Generate Tasks & To-Dos
+                            <FiChevronRight />
                           </>
                         )}
                       </button>
@@ -902,40 +910,44 @@ export default function KlarisApp() {
                   <p className={textSecondary}>Review and approve the task list</p>
                 </div>
 
-                <div className={`${cardBg} border ${borderColor} rounded-xl p-8 space-y-4`}>
+                <div className={`${cardBg} border ${borderColor} rounded-xl p-8 space-y-3`}>
                   {currentProject.tasks.map((task: any, idx: number) => (
-                    <div key={idx} className={`p-4 border ${borderColor} rounded-lg`}>
-                      <div className="flex items-start gap-3">
-                        <FiCheckSquare className={`text-${accent}-600 mt-1`} />
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-1">
-                            <h4 className="font-semibold">{task.title || task.name}</h4>
-                            {task.estimated_hours && (
-                              <span className={`text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 ${textSecondary} ml-2 flex-shrink-0`}>
-                                {task.estimated_hours}h
-                              </span>
-                            )}
+                    <div key={idx} className="flex items-start gap-3 py-2">
+                      <div className="mt-0.5">
+                        <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                          <FiCheck className="text-blue-600 dark:text-blue-400 text-xs" />
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <h4 className="font-medium mb-1">{task.title || task.name}</h4>
+                            <p className={`text-sm ${textSecondary}`}>{task.description || task.details}</p>
                           </div>
-                          <p className={`text-sm ${textSecondary}`}>{task.description || task.details}</p>
-                          {task.priority && (
-                            <span className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
-                              task.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                              task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                              'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                            }`}>
-                              {task.priority}
+                          {task.estimated_hours && (
+                            <span className={`text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 ${textSecondary} flex-shrink-0`}>
+                              {task.estimated_hours}h
                             </span>
                           )}
                         </div>
+                        {task.priority && (
+                          <span className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
+                            task.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                            'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          }`}>
+                            {task.priority}
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
 
                   {!tasksApproved ? (
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex gap-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
                       <button
                         onClick={approveStage}
-                        className={`flex-1 py-3 px-6 bg-${accent}-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-${accent}-700 flex items-center justify-center gap-2`}
+                        className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-blue-700 flex items-center justify-center gap-2"
                       >
                         <FiCheck />
                         Approve Tasks
@@ -950,8 +962,8 @@ export default function KlarisApp() {
                       </button>
                     </div>
                   ) : (
-                    <div className="pt-4">
-                      <div className={`p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center`}>
+                    <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
+                      <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mb-4 text-center">
                         <p className="text-sm text-green-800 dark:text-green-200 flex items-center justify-center gap-2">
                           <FiCheck className="text-lg" />
                           Tasks approved! Ready to generate schedule.
@@ -960,7 +972,7 @@ export default function KlarisApp() {
                       <button
                         onClick={generateTimeline}
                         disabled={isLoading}
-                        className={`w-full py-4 px-6 bg-${accent}-600 text-white rounded-lg font-semibold text-lg transition-all duration-150 hover:bg-${accent}-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl`}
+                        className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-medium transition-all duration-150 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isLoading ? (
                           <>
@@ -969,8 +981,8 @@ export default function KlarisApp() {
                           </>
                         ) : (
                           <>
-                            <FiCalendar />
                             Generate Schedule & Timeline
+                            <FiChevronRight />
                           </>
                         )}
                       </button>
